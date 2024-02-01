@@ -87,21 +87,28 @@ def pobranie_danych(grid,rok):
                             18: desired_hour_data.get('winddir', None),
                             19: desired_hour_data.get('windspeed', None),
                             20: desired_hour_data.get('windgust', None),
-                            #21: desired_hour_data.get('preciptype', None),#tu jest problem ze zwraca tablice wtedy wpierdala a tez latwo nie da sie sformatowac bo czasami zwraca nana mapowac tez nie mozna bo jest wiecej kombinacji niz mamy zapisne
-                            22: desired_hour_data.get('snowdepth', None),
-                            23: desired_hour_data.get('snow', None),
-                            24: desired_hour_data.get('precipprob', None),
-                            25: desired_hour_data.get('precip', None),
-                            26: desired_hour_data.get('dew', None),
-                            27: desired_hour_data.get('humidity', None),
-                            28: desired_hour_data.get('temp', None),
-                            29: desired_hour_data.get('feelslike', None)
+                            # 21: desired_hour_data.get('preciptype', None),#tu jest problem ze zwraca tablice wtedy wpierdala a tez latwo nie da sie sformatowac bo czasami zwraca nana mapowac tez nie mozna bo jest wiecej kombinacji niz mamy zapisne
+                            21: desired_hour_data.get('snowdepth', None),
+                            22: desired_hour_data.get('snow', None),
+                            23: desired_hour_data.get('precipprob', None),
+                            24: desired_hour_data.get('precip', None),
+                            25: desired_hour_data.get('dew', None),
+                            26: desired_hour_data.get('humidity', None),
+                            27: desired_hour_data.get('temp', None),
+                            28: desired_hour_data.get('feelslike', None)
                                     }
                     line=pobierz_wiersz_z_csv(indeks_wiersza) 
-                    #print(line)
+                    print(line)
                     for key, value in important_data.items():
                         line[key]= value
-                    #print(line)
+
+                    temp = {'ice' : 29, 'freezingrain' : 30, 'snow' : 31, 'rain': 32}
+                    value = desired_hour_data.get('preciptype', None)
+                    if (value):
+                        for c in value:
+                            line[temp[c]] = 1
+                            
+                    print(line)
                     zapisz_modyfikacje_do_csv(indeks_wiersza,line)
         print(orig)
         df.to_csv(dataname,index=False)
@@ -139,5 +146,21 @@ dataname='dane2018.csv'
 df = pd.read_csv(dataname) # nany jako -1 i wszsytko int zeby nie bylo bladow w daycode
 pobranie_danych(gridmaker(2018),2018)
 df.to_csv(dataname,index=False)
+
+
+# UŻYĆ TEJ FUNCKJI DO ZMIENIENIA csv, pobranie_danych powinno działać na zmienionych
+
+
+def modyfikuj_dataframe(df, kolumna_do_usuniecia, nazwa_pliku_csv):
+    # 'PRECIPTYPE' do usuniecia
+
+    df = df.drop(columns=[kolumna_do_usuniecia], errors='ignore')
+    df["ice"] = 0
+    df["freezingrain"] = 0
+    df["snow"] = 0
+    df["rain"] = 0
+    df.to_csv(nazwa_pliku_csv, index=False)
+    
+    return df
 
 
