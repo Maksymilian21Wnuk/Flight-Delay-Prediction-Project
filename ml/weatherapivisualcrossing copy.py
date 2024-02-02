@@ -76,7 +76,17 @@ def pobranie_danych(grid,rok):
                     hour=hours[1]
                     hour=hour//100
                     
-                    desired_hour_data = weather_day_data["days"][day]["hours"][hour] #extracting the hour data
+                    desired_hour_data = weather_day_data["days"][day]["hours"][hour]
+
+                    try:
+                        desired_hour_data = weather_day_data["days"][day]["hours"][hour] #extracting the hour data
+                    except KeyError as e:
+                        print(f"Error: {e}. Missing data for {day} and {hour}. Going to the next iteration.")
+                        continue
+                    except Exception as ex:
+                        print(f"Error: {ex}. Going to the next iteration.")
+                        continue
+                        
                    # print()
                     important_data = {
                             13: weather_day_data["days"][day].get('moonphase', None),
