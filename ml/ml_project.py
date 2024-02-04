@@ -30,7 +30,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from datetime import datetime, time
-import json
+import json 
 #import 
 df = pd.read_csv("dane2018.csv")
 pd.set_option("display.max_columns", None)
@@ -243,4 +243,3 @@ def GDA(X_train, X_test, y_train, y_test):
     print('\nRaport klasyfikacji:')
     print(classification_report(y_test, y_pred))
 
-check_nans(df)
