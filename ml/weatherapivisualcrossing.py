@@ -41,8 +41,14 @@ def pobranie_danych(grid, rok, orig, dataname, df):
     weather_day_data = response.json()
 
     for day in range(numofdaysinyear):
-        desired_day_data = weather_day_data["days"][day]
-        moon = weather_day_data["days"][day].get('moonphase', None)
+
+        try:
+            desired_day_data = weather_day_data["days"][day]
+            moon = weather_day_data["days"][day].get('moonphase', None)
+        except Exception as e:
+            print(f"Error: {e}. Missing data for {day}. Going to the next iteration.")
+            continue
+
         squer = grid[day]
 
         if len(squer) > 1:
