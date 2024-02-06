@@ -8,7 +8,6 @@ import calendar
 import locale
 
 warnings.filterwarnings("ignore")
-locale.setlocale(locale.LC_TIME, 'en_US.UTF-8')
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 
 # PRZYGOTOWANIE DANYCH po chuju DO WYKRESOW - tymczasowo ??
@@ -101,8 +100,17 @@ def airlines_delay_analysis(df):
 	plt.tight_layout(pad=3.0)
 	plt.show()
 
-def airlines_distance_analysis():
-	pass
+def airlines_distance_analysis(df):
+	carrier_distances = df.groupby('OP_CARRIER')['DISTANCE'].sum()
+	plt.figure(figsize=(10, 6))
+	carrier_distances.plot(kind='bar', color='skyblue')
+	plt.title('Sumaryczne dystanse dla poszczególnych linii lotniczych')
+	plt.xlabel('Linie lotnicze')
+	plt.ylabel('Sumaryczny dystans [jednostka]')
+	plt.xticks(rotation=45)
+	plt.grid(axis='y', linestyle='--', alpha=0.7)
+	plt.tight_layout()
+	plt.show()
 
 def hours_analysis():
 	pass
@@ -182,10 +190,10 @@ def linear_correaltaion(df, cols, target=None):
 if __name__ == "__main__":
 	# zrobic sobie df z concat_csvs.py
 	# ogarnac go funckja przygotowanie_df_do_wykresow()
-	# df = pd.read_csv('')
+	df = pd.read_csv('data_cale.csv') # z concat_csvs.py
+	df = przygotowanie_df_do_wykresow(df)
 	# 
-	# airlines_delay_percentage(df)
-	# monthly_delay_percentage(df)
+	airlines_distance_analysis(df)
 	# NMI(df, [...])
 	# linear_correaltaion(df, [...])
 	# NMI(df, [...], 'ARR_DELAY')
