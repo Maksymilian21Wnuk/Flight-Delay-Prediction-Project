@@ -4,51 +4,140 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import warnings
-warnings.filterwarnings("ignore")
+import calendar
+import locale
 
+warnings.filterwarnings("ignore")
+locale.setlocale(locale.LC_TIME, 'en_US.UTF-8')
 pd.set_option('display.float_format', lambda x: '%.5f' % x)
 
-def mapping(val, whattomap):
-    # Function to map values using a predefined mapping from a JSON file
-    with open('mappings.json', 'r', encoding='utf-8') as file:
-        data = json.load(file)
-        data_dict = data.get(whattomap)
-        resp_dict = data_dict.get(str(val))
-    return resp_dict
-
-df = pd.read_csv("data_2018.csv", usecols=lambda c: c != 'CONDITIONS')
-
-
-
-
-
-def delays_barplot():
-    delay_counts = df['DELAY'].value_counts()
-    ax = sns.barplot(x=delay_counts.index, y=delay_counts, hue=delay_counts.index, palette="Set2", legend=False)
-    ax.set_xticks((0, 1))
-    ax.set_xticklabels(["No", "Yes"])
-    plt.show()
+# PRZYGOTOWANIE DANYCH po chuju DO WYKRESOW - tymczasowo ??
+# odmapowuje 'ORIGIN', 'OP_CARRIER', dodaje cala date z czasem
+def przygotowanie_df_do_wykresow(df):
+	with open('wszsytkiemapowania.txt', 'r') as file:
+		mapping = eval(file.read())
+	do_zmapowania = ['ORIGIN', 'OP_CARRIER'] # 'DEST'
+	reverse_mapping = {kolumna: {v: k for k, v in mapping[kolumna].items()} for kolumna in do_zmapowania}
+	for kolumna in do_zmapowania:
+		df[kolumna] = df[kolumna].map(reverse_mapping[kolumna])
+	df[do_zmapowania] = df[do_zmapowania].astype('category')
+	df['datatype'] = pd.to_datetime(df[['FL_YEAR', 'FL_MONTH', 'FL_DAY']].astype(str).agg('-'.join, axis=1), errors='coerce')
+	df['day_of_week'] = df['datatype'].dt.day_of_week + 1
+	df['month'] = df['datatype'].dt.month + 1
+	df = df.drop(columns=['ID', 'id', 'WINDGUST'], axis=1)
+	df = df.dropna()
+	return df
 
 
-# JESZCZE MAPPOWANIE
-def airlines_barplot():
-	ax = sns.countplot(x='OP_CARRIER', hue='DELAY', data=df, palette='Set2')
+
+
+
+
+
+
+
+
+
+# zamaist wykresu dalbym zwykla linijke wyliczajaca i wypisujaca
+def delays_barplot(df):
+	delay_counts = df['DELAY'].value_counts()
+	ax = sns.barplot(x=delay_counts.index, y=delay_counts, hue=delay_counts.index, palette="Set2", legend=False)
+	ax.set_xticks((0, 1))
+	ax.set_xticklabels(["No", "Yes"])
 	plt.show()
 
-
-# JESZCZE MAPPOWANIE I NOWA KOLUMNA Z DNIAMI TYGODNIA ??
-def dayoftheweek_braplot():
-	ax = sns.countplot(x='FL_DAY', hue='DELAY', data=df, palette='Set2')
+def airlines_delay_analysis(df):
+	width = 0.7  # Szerokość słupków
+	plt.figure(figsize=(12, 10))
+	# 
+	plt.subplot(3, 1, 1)
+	delay_percentage = df.groupby('OP_CARRIER')['DELAY'].mean() * 100
+	ax1 = delay_percentage.plot(kind='bar', width=width, color='skyblue')
+	plt.title('Percentage of Delays for Each Airline')
+	plt.xlabel('OP_CARRIER')
+	plt.ylabel('Percentage of Delays')
+	plt.xticks(rotation=45, ha='right')
+	plt.legend(title='Percentage of', bbox_to_anchor=(1.05, 0.5), loc='center left')
+	ax1.set_ylim([0, 70])
+	for i in range(0, 80, 10):
+		plt.axhline(y=i, color='gray', linestyle= '-' if i==50 else '--', linewidth=0.5)
+	# 
+	plt.subplot(3, 1, 2)
+	result_df = df.groupby(['OP_CARRIER', 'day_of_week'])['DELAY'].mean().reset_index()
+	result_df['DELAY'] = result_df['DELAY'] * 100
+	ax2 = sns.barplot(x='OP_CARRIER', y='DELAY', hue='day_of_week', data=result_df, ci=None)
+	plt.title('Procentowe ilości opóźnień dla każdej wartości OP_CARRIER')
+	plt.xlabel('OP_CARRIER')
+	plt.ylabel('Procent opóźnień')
+	ax2.set_ylim([0, 70])
+	for i in range(0, 80, 10):
+		plt.axhline(y=i, color='gray', linestyle= '-' if i==50 else '--', linewidth=0.5)
+	plt.legend(title='Day of week', bbox_to_anchor=(1.05, 0.5), loc='center left')
+	# 
+	plt.subplot(3, 1, 3)
+	result_df = df.groupby(['OP_CARRIER', 'month'])['DELAY'].mean().reset_index()
+	result_df['DELAY'] = result_df['DELAY'] * 100
+	ax3 = sns.barplot(x='OP_CARRIER', y='DELAY', hue='month', data=result_df, ci=None, palette='viridis')
+	plt.title('Procentowe ilości opóźnień dla każdej wartości OP_CARRIER w kolejnych miesiącach')
+	plt.xlabel('OP_CARRIER')
+	plt.ylabel('Procent opóźnień')
+	ax3.set_ylim([0, 70])
+	for i in range(0, 80, 10):
+		plt.axhline(y=i, color='gray', linestyle= '-' if i==50 else '--', linewidth=0.5)
+	plt.legend(title='Month of year', bbox_to_anchor=(1.05, 0.5), loc='center left')
+	plt.tight_layout(pad=3.0)
+	plt.show()
+	#
+	plt.figure(figsize=(12, 6))
+	delayed_flights = df[df['DELAY'] == 1].groupby('OP_CARRIER').size()
+	on_time_flights = df[df['DELAY'] == 0].groupby('OP_CARRIER').size()
+	delayed_bars = plt.bar(delayed_flights.index, delayed_flights, width, color='red', label='Delayed')
+	on_time_bars = plt.bar(on_time_flights.index, on_time_flights, width, bottom=delayed_flights, color='green', label='On Time')
+	plt.title('Total Number of Flights for Each Airline')
+	plt.xlabel('Airline')
+	plt.ylabel('Number of Flights')
+	plt.xticks(rotation=45, ha='right')
+	plt.legend(bbox_to_anchor=(1.05, 0.5), loc='center left')
+	plt.tight_layout(pad=3.0)
 	plt.show()
 
+def airlines_distance_analysis():
+	pass
+
+def hours_analysis():
+	pass
+
+def monthly_delay_analysis(df):
+	plt.figure(figsize=(10, 12))
+	# Wykres procentowy opóźnień
+	plt.subplot(2, 1, 1)
+	plt.title('Monthly Delay Percentage Over Different Years')
+	for year in df['datatype'].dt.year.unique():
+		data_year = df[df['datatype'].dt.year == year]
+		delay_percentage = data_year.groupby(data_year['datatype'].dt.month)['DELAY'].mean() * 100
+		months_names = [calendar.month_abbr[i] for i in delay_percentage.index]
+		plt.plot(months_names, delay_percentage, label=f'Year {year}', linestyle='-', marker='o')
+	plt.ylabel('Delay Percentage')
+	plt.legend()
+	plt.grid(True)
+	# Wykres ilości opóźnień
+	plt.subplot(2, 1, 2)
+	plt.title('Monthly Delay Counts Over Different Years')
+	for year in df['datatype'].dt.year.unique():
+		data_year = df[df['datatype'].dt.year == year]
+		delay_counts = data_year.groupby(data_year['datatype'].dt.month)['DELAY'].sum()
+		months_names = [calendar.month_abbr[i] for i in delay_counts.index]
+		plt.plot(months_names, delay_counts, label=f'Year {year}', linestyle='-', marker='o')
+	plt.xlabel('Month')
+	plt.ylabel('Delay Count')
+	plt.legend()
+	plt.grid(True)
+	plt.tight_layout(pad=3.0)
+	plt.show()
 
 # Normalized Mutual Information
 # target='ARR_DELAY'
-# POMIESZNAE DF Z DF2 BO DANE NIE OBROBIONE
-def NMI(cols, target=None):
-	# cols2 = cols + [target]
-	# df2 = df[cols2]
-	# df2 = df2.dropna() 
+def NMI(df, cols, target=None):
 	if target:
 		nmi_values = []
 		for col in cols:
@@ -59,7 +148,6 @@ def NMI(cols, target=None):
 		for col, nmi_value in nmi_values_sorted:
 			print(f"{col:<15}{round(nmi_value, 3)}")
 	else:
-		cols.append(target)
 		nmi_matrix = pd.DataFrame(index=cols, columns=cols)
 		for col1 in cols:
 			for col2 in cols:
@@ -67,13 +155,13 @@ def NMI(cols, target=None):
 				nmi_matrix.loc[col1, col2] = nmi_value
 		heatmap_nmi = sns.heatmap(nmi_matrix.astype(float), annot=True, cmap="coolwarm", vmin=0, vmax=1)
 		plt.title("Normalized Mutual Information (NMI) Heatmap")
+		plt.xticks(rotation=45)
+		plt.yticks(rotation=45)
 		plt.show()
-
 
 # Linear Correlation Heapmap
 # target='ARR_DELAY'
-# TYLKO NA OBROBIONYCH DNAYCH
-def linear_correaltaion(cols, target=None):
+def linear_correaltaion(df, cols, target=None):
 	if target:
 		correlations = round(df[cols].corrwith(df[target]), 3)
 		print(f"{target}")
@@ -81,29 +169,25 @@ def linear_correaltaion(cols, target=None):
 			print(f"{col:<15}{correlation}")
 	else:
 		sns.heatmap(df[cols].corr(), vmin=-1, vmax=1, annot=False)
+		plt.xticks(rotation=45)
+		plt.yticks(rotation=45)
 		plt.show()
 
-def columns_by_variance(cols=None):
-	# if cols:
-		# df = df[cols]
-	# df2 = df.dropna()
-	# df2=df2.drop('id', axis=1)
-	features = df.columns
-	X = df.values
-	pca = PCA()
-	pca.fit(X)
-	columns_by_variance = sorted(zip(pca.explained_variance_, features), reverse=True)
-	variance_sum = sum([var for var, _ in columns_by_variance])
-	print("Columns ordered by variance:")
-	for var, col in columns_by_variance:
-	        print(f"{col:<18}{round(var/variance_sum, 4)}")
 
 
 
 
 
 
-
-
-# jeszcze bedize robione
-# dziala na polaczonych danych w jednego csv bez nanow, stringow itp
+if __name__ == "__main__":
+	# zrobic sobie df z concat_csvs.py
+	# ogarnac go funckja przygotowanie_df_do_wykresow()
+	# df = pd.read_csv('')
+	# 
+	# airlines_delay_percentage(df)
+	# monthly_delay_percentage(df)
+	# NMI(df, [...])
+	# linear_correaltaion(df, [...])
+	# NMI(df, [...], 'ARR_DELAY')
+	# linear_correaltaion(df, [...], 'ARR_DELAY')
+	pass
