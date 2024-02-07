@@ -44,6 +44,7 @@ def normalizacja(X_train, X_test):
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
     return X_train, X_test
+
 def equaldelay(df,name):
     df_class_0 = df[df['Delay'] == 0]
     df_class_1 = df[df['Delay'] == 1]
@@ -137,6 +138,9 @@ def wykresPCA(a):
     for i, var_ratio in tqdm(enumerate(explained_var_ratio)):
         print(f"Komponent {i + 1}: {var_ratio * 100:.2f}% wariancji")
     print(sum(explained_var_ratio) * 100)
+    
+    
+    
 def wykreskorelacja_pogoda(df):
     # plt.figure(figsize=(10, 10))
     # sns.heatmap(pogoda, cmap='coolwarm', square=True)
@@ -173,6 +177,7 @@ def LogREG(X_train,X_test,y_train,y_test):
     # Print results
     print("LR best parameters:", best_params)
     print("Accuracy:", accuracy)
+    
 def Principalcomponentanalysis(X_train,X_test,y_train,y_test):
     pcasplitnum = range(2, X_train.shape[1], 1)  # Zmieniłem 'features' na 'X_train.shape[1]'
     knnpar = 5
@@ -228,7 +233,8 @@ def DecisionTree(X_train, X_test, y_train, y_test, depth=4):
 
     # Wyświetlanie pełnego raportu klasyfikacji
     print('\nRaport klasyfikacji:')
-    print(classification_report(y_test, y_pred))          
+    print(classification_report(y_test, y_pred)) 
+             
 def GDA(X_train, X_test, y_train, y_test):
 
     # Inicjalizacja klasyfikatora GDA
