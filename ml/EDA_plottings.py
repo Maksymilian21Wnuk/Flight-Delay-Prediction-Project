@@ -46,7 +46,7 @@ def delays_barplot(df):
 	plt.show()
 
 def airlines_delay_analysis(df):
-	width = 0.7  # Szerokość słupków
+	width = 0.7  # bar width
 	plt.figure(figsize=(12, 10))
 	# 
 	plt.subplot(3, 1, 1)
@@ -54,7 +54,7 @@ def airlines_delay_analysis(df):
 	ax1 = delay_percentage.plot(kind='bar', width=width, color='skyblue')
 	plt.title('Percentage of Delays for Each Airline')
 	plt.xlabel('OP_CARRIER')
-	plt.ylabel('Percentage of Delays')
+	plt.ylabel('Percentage of delays')
 	plt.xticks(rotation=45, ha='right')
 	plt.legend(title='Percentage of', bbox_to_anchor=(1.05, 0.5), loc='center left')
 	ax1.set_ylim([0, 70])
@@ -65,9 +65,9 @@ def airlines_delay_analysis(df):
 	result_df = df.groupby(['OP_CARRIER', 'day_of_week'])['DELAY'].mean().reset_index()
 	result_df['DELAY'] = result_df['DELAY'] * 100
 	ax2 = sns.barplot(x='OP_CARRIER', y='DELAY', hue='day_of_week', data=result_df, ci=None)
-	plt.title('Procentowe ilości opóźnień dla każdej wartości OP_CARRIER')
+	plt.title('Percentage of Delays for Each Airline for the Following Days of the Week')
 	plt.xlabel('OP_CARRIER')
-	plt.ylabel('Procent opóźnień')
+	plt.ylabel('Percentage of delays')
 	ax2.set_ylim([0, 70])
 	for i in range(0, 80, 10):
 		plt.axhline(y=i, color='gray', linestyle= '-' if i==50 else '--', linewidth=0.5)
@@ -77,9 +77,9 @@ def airlines_delay_analysis(df):
 	result_df = df.groupby(['OP_CARRIER', 'month'])['DELAY'].mean().reset_index()
 	result_df['DELAY'] = result_df['DELAY'] * 100
 	ax3 = sns.barplot(x='OP_CARRIER', y='DELAY', hue='month', data=result_df, ci=None, palette='viridis')
-	plt.title('Procentowe ilości opóźnień dla każdej wartości OP_CARRIER w kolejnych miesiącach')
+	plt.title('The Percentage of Delays for Each Airline in the Following Months')
 	plt.xlabel('OP_CARRIER')
-	plt.ylabel('Procent opóźnień')
+	plt.ylabel('Percentage of delays')
 	ax3.set_ylim([0, 70])
 	for i in range(0, 80, 10):
 		plt.axhline(y=i, color='gray', linestyle= '-' if i==50 else '--', linewidth=0.5)
@@ -93,8 +93,8 @@ def airlines_delay_analysis(df):
 	delayed_bars = plt.bar(delayed_flights.index, delayed_flights, width, color='red', label='Delayed')
 	on_time_bars = plt.bar(on_time_flights.index, on_time_flights, width, bottom=delayed_flights, color='green', label='On Time')
 	plt.title('Total Number of Flights for Each Airline')
-	plt.xlabel('Airline')
-	plt.ylabel('Number of Flights')
+	plt.xlabel('OP_CARRIER')
+	plt.ylabel('Number of flights')
 	plt.xticks(rotation=45, ha='right')
 	plt.legend(bbox_to_anchor=(1.05, 0.5), loc='center left')
 	plt.tight_layout(pad=3.0)
@@ -104,9 +104,9 @@ def airlines_distance_analysis(df):
 	carrier_distances = df.groupby('OP_CARRIER')['DISTANCE'].sum()
 	plt.figure(figsize=(10, 6))
 	carrier_distances.plot(kind='bar', color='skyblue')
-	plt.title('Sumaryczne dystanse dla poszczególnych linii lotniczych')
-	plt.xlabel('Linie lotnicze')
-	plt.ylabel('Sumaryczny dystans [jednostka]')
+	plt.title('Total Distances for Individual Airlines')
+	plt.xlabel('OP_CARRIER')
+	plt.ylabel('Total distances [miles]')
 	plt.xticks(rotation=45)
 	plt.grid(axis='y', linestyle='--', alpha=0.7)
 	plt.tight_layout()
@@ -125,7 +125,7 @@ def monthly_delay_analysis(df):
 		delay_percentage = data_year.groupby(data_year['datatype'].dt.month)['DELAY'].mean() * 100
 		months_names = [calendar.month_abbr[i] for i in delay_percentage.index]
 		plt.plot(months_names, delay_percentage, label=f'Year {year}', linestyle='-', marker='o')
-	plt.ylabel('Delay Percentage')
+	plt.ylabel('Delay percentage')
 	plt.legend()
 	plt.grid(True)
 	# Wykres ilości opóźnień
@@ -137,7 +137,7 @@ def monthly_delay_analysis(df):
 		months_names = [calendar.month_abbr[i] for i in delay_counts.index]
 		plt.plot(months_names, delay_counts, label=f'Year {year}', linestyle='-', marker='o')
 	plt.xlabel('Month')
-	plt.ylabel('Delay Count')
+	plt.ylabel('Delay count')
 	plt.legend()
 	plt.grid(True)
 	plt.tight_layout(pad=3.0)
@@ -147,6 +147,7 @@ def monthly_delay_analysis(df):
 # target='ARR_DELAY'
 def NMI(df, cols, target=None):
 	if target:
+		print("Normalized Mutual Information\n")
 		nmi_values = []
 		for col in cols:
 			nmi_value = normalized_mutual_info_score(df[col], df[target])
@@ -171,6 +172,7 @@ def NMI(df, cols, target=None):
 # target='ARR_DELAY'
 def linear_correaltaion(df, cols, target=None):
 	if target:
+		print("Linear Correaltaion\n")
 		correlations = round(df[cols].corrwith(df[target]), 3)
 		print(f"{target}")
 		for col, correlation in zip(cols, correlations):
