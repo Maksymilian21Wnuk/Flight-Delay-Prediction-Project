@@ -1,3 +1,5 @@
+# moduł patryka do wykresów, lepiej jako moduł niż jako main
+
 from sklearn.decomposition import PCA
 from sklearn.metrics import normalized_mutual_info_score
 import pandas as pd
@@ -26,14 +28,6 @@ def przygotowanie_df_do_wykresow(df):
 	df = df.drop(columns=['ID', 'id', 'WINDGUST'], axis=1)
 	df = df.dropna()
 	return df
-
-
-
-
-
-
-
-
 
 
 
@@ -184,20 +178,16 @@ def linear_correaltaion(df, cols, target=None):
 		plt.show()
 
 
+# zrobic sobie df z concat_csvs.py
+# ogarnac go funckja przygotowanie_df_do_wykresow()
+#not needed
+#df = pd.read_csv('data_cale.csv') # z concat_csvs.py
 
-
-
-
-
-if __name__ == "__main__":
-	# zrobic sobie df z concat_csvs.py
-	# ogarnac go funckja przygotowanie_df_do_wykresow()
-	df = pd.read_csv('data_cale.csv') # z concat_csvs.py
+def run_plots(df):
 	df = przygotowanie_df_do_wykresow(df)
-	# 
+ 
 	airlines_distance_analysis(df)
-	# NMI(df, [...])
-	# linear_correaltaion(df, [...])
-	# NMI(df, [...], 'ARR_DELAY')
-	# linear_correaltaion(df, [...], 'ARR_DELAY')
-	pass
+	linear_correaltaion(df)
+	NMI(df)
+	monthly_delay_analysis(df)
+	airlines_delay_analysis(df)
