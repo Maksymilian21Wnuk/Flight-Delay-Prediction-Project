@@ -2,9 +2,9 @@ import os
 import pandas as pd
 
 
-sciezka_katalogu = "//home//patryk//danne"
+sciezka_katalogu = "/home/meks/Desktop/danne/"
 
-df = pd.read_csv('data_cale.csv')
+df = pd.DataFrame()
 
 
 for rok in os.listdir(sciezka_katalogu):

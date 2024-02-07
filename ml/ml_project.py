@@ -54,6 +54,9 @@ def equaldelay(df,name):
 # Połącz wybrane dane dla obu grup
     balanced_data = pd.concat([delay_0_selected, delay_1_selected])
     balanced_data.to_csv(name)
+    
+    
+# IN JUPYTER ##
 def check_nans(df):
   # since all len's are same
   n = len(df['FL_YEAR'])
@@ -61,6 +64,8 @@ def check_nans(df):
     nans = df[col].isna().sum()
     print(f"Col name: {col:<21} nans: {nans:<10}   {round((nans / n) * 100,2)} %")
   print(f"\nThere are {n} rows")
+  
+  
 def mapping(df,col_name,filename):
 
     
