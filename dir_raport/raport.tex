@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 
+\graphicspath{ {./plots} }
 
 \title{Raport for Flight Delay Predicion Project} % Sets article title
 \author{Dominik Olejarz, Patryk Rybak, Maksymilian Wnuk} % Sets authors name
@@ -41,8 +42,8 @@ flights and weather:
 
 	\subsection{Weather data}
 		Fetching data for weather requires more work than just downloading a csv file.
-		We will be downloading it by making api requests to \url{https://www.visualcrossing.com/}.
-		Thanks to Visual Crossing company, we were able to make those requests in unlimited way.
+		We will be downloading it by making api requests to \url{https://www.visualcrossing.com}.
+		Thanks to Visual Crossing\textsuperscript{\tiny\textregistered} company, we were able to make those requests in unlimited way.
 		We contacted their support and then they gave us access to unlimited api key. We
 		get columns:
 
@@ -63,6 +64,12 @@ flights and weather:
 DOMINIK
 
 \section{Plots}
+In this section we will look at plots describing data in our dataset.
+	
+	\includegraphics[scale=0.22]{plot1}
+	\includegraphics[scale=0.25]{plot2}
+	\includegraphics[scale=0.4]{plot3}
+	\includegraphics[scale=0.4]{plot4}	
 
 
 \section{Data preprocessing}
