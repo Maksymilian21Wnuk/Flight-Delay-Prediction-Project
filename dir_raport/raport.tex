@@ -33,7 +33,7 @@ flights and weather:
 \item Airline 
 \item Origin city 
 \item Destnation city
-\item Arr time  
+\item Arrive time  
 \item Cancelled 
 \item Delay  
 \item Distance  
@@ -44,8 +44,15 @@ flights and weather:
 		Fetching data for weather requires more work than just downloading a csv file.
 		We will be downloading it by making api requests to \url{https://www.visualcrossing.com}.
 		Thanks to Visual Crossing\textsuperscript{\tiny\textregistered} company, we were able to make those requests in unlimited way.
-		We contacted their support and then they gave us access to unlimited api key. We
-		get columns:
+		We contacted their support and then they gave us access to unlimited api key. 	\\
+		But that wasn't enough, almost 12 millions api queries is too much. Here we encounter
+		our first problem.\\
+		\textbf{Solution:}\\
+		It wasn't that easy, we came up with idea of sending one request for one year for certain place.
+		Api allowed us to make such queries. Then we made merging of data, and thus finally had all data needed
+		for project.\\		
+
+		We get columns:
 
 			\begin{itemize}
 \item Temperature
@@ -57,12 +64,7 @@ flights and weather:
 \item Ice and freezing rain
 				
 			\end{itemize}
-
-
-\section{Merging data}
-
-DOMINIK
-
+\newpage
 \section{Plots}
 In this section we will look at plots describing data in our dataset.
 	
@@ -71,7 +73,7 @@ In this section we will look at plots describing data in our dataset.
 	\includegraphics[scale=0.4]{plot3}
 	\includegraphics[scale=0.4]{plot4}	
 
-
+\newpage
 \section{Data preprocessing}
 Dataset contains of lots of NaN's. We removed all of them, by removing rows that contained them. Data loss
 was incredibly low, we lost about 10,000 of rows that contained at least one NaN, which is great. Additionally,
