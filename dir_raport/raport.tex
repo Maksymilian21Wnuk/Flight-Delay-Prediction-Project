@@ -30,13 +30,15 @@ flights and weather:
 		We are getting 2017-2018 flights data from \url{kaggle.com} website.
 		It contains of columns:	
 			\begin{itemize}
-\item Airline 
-\item Origin city 
-\item Destnation city
-\item Arrive time  
-\item Cancelled 
-\item Delay  
-\item Distance  
+\item Airline - company name of airline operating flight
+\item Origin city  - city of departure
+\item Destination city - city of arrival
+\item CRS dep time, CS arr time - expected time of departure and arrive in (weirdly represented) unsigned integer in which 
+		least signitficant digits represent minutes and most significant represent hours
+\item Arr time - factual time of arrive
+\item Cancelled, Delay - boolean values signifying whether the flight was cancelled or (respectively) delayed
+\item Distance  - distance between origin and destination
+\item Arrive delay - signed integer value of delay
 				
 			\end{itemize}
 
@@ -45,28 +47,38 @@ flights and weather:
 		We will be downloading it by making api requests to \url{https://www.visualcrossing.com}.
 		Thanks to Visual Crossing\textsuperscript{\tiny\textregistered} company, we were able to make those requests in unlimited way.
 		We contacted their support and then they gave us access to unlimited api key. 	\\
-		But that wasn't enough, almost 12 millions api queries is too much. Here we encounter
+		However, we couldn't make 12 millions of api queries. Here we encounter
 		our first problem.\\
 		\textbf{Solution:}\\
 		It wasn't that easy, we came up with idea of sending one request for one year for certain place.
-		Api allowed us to make such queries. Then we made merging of data, and thus finally had all data needed
-		for project.\\		
+		Api allowed us to make such queries.  So in order to do this, we send request of getting timeline of whole year,
+		given city, year (2017 and later 2018), state, starting and finishing date (1'st january to 31'st december). What we get is a whole 					timeline
+		for the city. We can now easily merge data from flights with weathers, using matrix with weather for 
+		according place and time.\\
 
 		We get columns:
 
 			\begin{itemize}
-\item Temperature
-\item Cloudcover
-\item Monphase
+\item Temperature - in fahrenheit scale
+\item Cloudcover - how much of the sky is covered in percentage
+\item Monphase - fractional portion through moon lunation cycle, 0-new moon to 0.5 ful moon and back to 1.0 next new moon
 \item Windspeed, windgust and winddir
-\item Snow and snowdepth
-\item Dew humidity
-\item Ice and freezing rain
+\item Snow and snowdepth - amount of snow that fell and depth of snow on the ground
+\item Dew - dew point temperature in fahrenheit
+\item Humidity - percentage of relative humidity
+\item Boolean represented variables:
+	\begin{itemize}
+		\item ice
+		\item freezing rain
+		\item snow
+		\item rain
+	\end{itemize}
 				
 			\end{itemize}
 \newpage
-\section{Plots}
-In this section we will look at plots describing data in our dataset.
+\section{Explanatory Data Analysis (EDA) plots}
+In this section we will look at plots describing data in our dataset.\\
+Those plots are constructed in python' file \textit{EDA\_plottings.py} 
 	
 	\includegraphics[scale=0.22]{plot1}
 	\includegraphics[scale=0.25]{plot2}
@@ -75,6 +87,8 @@ In this section we will look at plots describing data in our dataset.
 
 \newpage
 \section{Data preprocessing}
+
+\subsection{NaN's removal}
 Dataset contains of lots of NaN's. We removed all of them, by removing rows that contained them. Data loss
 was incredibly low, we lost about 10,000 of rows that contained at least one NaN, which is great. Additionally,
 we removed columns that contained A LOT of NaN's. Those columns were:
@@ -85,8 +99,15 @@ we removed columns that contained A LOT of NaN's. Those columns were:
 		\item ID,id - 55\% and 44\% respectively,no idea why so many nans, its just id's whose we don't even use in our model.
 	\end{itemize}
 
-
 However, we are not sure if that was proper way of doing this, hence we ask ourselves: does snow affect flight delays? How about snowdepth and wingust? Later on we can always retrieve those columns and check correlation.
+
+\subsection{Normalization}
+
+
+\subsection{Mapping strings to integers}
+In machine learning we would like to represent strings as integers. We will do that, by mapping destination and origin cities to integers
+as json file. This file is in \textit{Flight-Delay-Prediction/ml} folder, named mappings.json. Additionally, we will map some weather data. Under column conditions there are many string representations, but we will represent it as integers (also in file mappings.json).
+
 
 \section{Machine learning part}
 
