@@ -14,21 +14,25 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 
 
-
-
+# okazuje sie, ze trzban dropnac kolumne z datatype z zbiorow Domina
+# drop tez dla Unnamed: 0 
+# te dropy z wyzej musz byc dla testu i terningu z osoban
+# i teraz mozna normalizwoac 
+# w test 
+X_train= scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
 
 # NORMALIZACJA
 
 # Normalization
-# scaler = StandardScaler()
-# X_train_scaled = scaler.fit_transform(X_train_balanced)
-# X_test_scaled = scaler.transform(X_test)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_balanced)
+X_test_scaled = scaler.transform(X_test)
 
-# X_train = scaler.fit_transform(X_train)
-# X_test_s = scaler.transform(X_test)
-
-
+# zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
+# np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
+# np.savetxt('X_test_scaled.csv', X_test, delimiter=",")
 
 
 # DOBRY PODZIAL NA TEST I TRAIN
@@ -61,23 +65,22 @@ def train_test_sets_preparation(df):
 
 
 # NA RAZIE NIEWAZNE
-
+# 330_000
 def split_csv(input_csv, output_prefix, max_rows_per_chunk):
 	# Wczytaj cały plik CSV
 	df = pd.read_csv(input_csv, chunksize=max_rows_per_chunk)
-	
 	# Iteruj przez chunki i zapisz każdy chunk do osobnego pliku CSV
 	for i, chunk in enumerate(df):
 		chunk.to_csv(f"{output_prefix}_{i}.csv", index=False)
 
-def split_array_to_csv(input_array, output_prefix, max_rows_per_chunk):
-	# Konwertuj numpy.ndarray na DataFrame
-	df = pd.DataFrame(input_array)
-	# Oblicz liczbę części, na jakie należy podzielić DataFrame
-	num_chunks = len(df) // max_rows_per_chunk + 1
-	# Podziel DataFrame na kawałki i zapisz każdy kawałek do osobnego pliku CSV
-	for i, chunk in enumerate(np.array_split(df, num_chunks)):
-		chunk.to_csv(f"{output_prefix}_{i}.csv", index=False)
+# def split_array_to_csv(input_array, output_prefix, max_rows_per_chunk):
+# 	# Konwertuj numpy.ndarray na DataFrame
+# 	df = pd.DataFrame(input_array)
+# 	# Oblicz liczbę części, na jakie należy podzielić DataFrame
+# 	num_chunks = len(df) // max_rows_per_chunk + 1
+# 	# Podziel DataFrame na kawałki i zapisz każdy kawałek do osobnego pliku CSV
+# 	for i, chunk in enumerate(np.array_split(df, num_chunks)):
+# 		chunk.to_csv(f"{output_prefix}_{i}.csv", index=False)
 
 
 
@@ -214,16 +217,17 @@ def KNN(X_train, X_test, y_train, y_test):
 # zalozenia sa takie, ze z calego znormalizowanego pliku X_train powstaly x_train_1, ..., X_train_7 i analogicznie z X_test. W kazdym jest max milion wierszy. y_train i y_test są całe bez podziałów
 
 
-from sklearn.linear_model import LogisticRegression
 
 # Function to load data from CSV files
-def load_data(set_type, index):
-    X = pd.read_csv(f'X_{set_type}_{index}.csv')
-    y = pd.read_csv(f'Y_{set_type}.csv')
-    start = (index - 1) * 1_000_000
-    end = start + len(X)
-    y = y.iloc[start:end]
-    yield X, y.values
+def load_data(set_type, indices):
+	for index in indices:
+		X = pd.read_csv(f'X_{set_type}_{index}.csv')
+		y = pd.read_csv(f'y_{set_type}.csv')
+		start = index * 1_000_000
+		end = start + len(X)
+		y = y.iloc[start:end]
+		yield X, y.values.ravel()
+
 
 
 
@@ -234,15 +238,17 @@ def load_data(set_type, index):
 model = SGDClassifier()
 
 # Iteratively train the model on divided datasets
-for X_test, y_test in load_data('train', range(1, 8))
-    model.partial_fit(X_train, y_train)
+for X_train, y_train in load_data('train', range(0, 7)):
+	print(f"{X_train.shape}    {y_train.shape}")
+	model.partial_fit(X_train, y_train, classes=[0,1])
 
 # Evaluate the model on entire test data
 test_accuracy = 0
 test_samples = 0
-for X_test, y_test in load_data('test', range(1, 8)):
-    test_accuracy += model.score(X_test, y_test) * len(X_test)
-    test_samples += len(X_test)
+for X_test, y_test in load_data('test', range(0, 2)):
+	print(f"{X_test.shape}    {y_test.shape}")
+	test_accuracy += model.score(X_test, y_test) * len(X_test)
+	test_samples += len(X_test)
 
 print("Overall accuracy on test data:")
 print(test_accuracy / test_samples)
