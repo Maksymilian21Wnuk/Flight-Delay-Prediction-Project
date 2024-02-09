@@ -211,6 +211,8 @@ def KNN(X_train, X_test, y_train, y_test):
 # MODELE NA PODZIELONYCH DANCYH
 
 
+# zalozenia sa takie, ze z calego znormalizowanego pliku X_train powstaly x_train_1, ..., X_train_7 i analogicznie z X_test. W kazdym jest max milion wierszy. y_train i y_test są całe bez podziałów
+
 
 from sklearn.linear_model import LogisticRegression
 
