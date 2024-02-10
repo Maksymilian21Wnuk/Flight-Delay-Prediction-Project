@@ -186,8 +186,8 @@ def linear_correaltaion(df, cols, target=None):
 def run_plots(df):
 	df = przygotowanie_df_do_wykresow(df)
 	#print(df.columns.values)
-	airlines_distance_analysis(df)
-	monthly_delay_analysis(df)
-	airlines_delay_analysis(df)
+	#airlines_distance_analysis(df)
+	#monthly_delay_analysis(df)
+	#airlines_delay_analysis(df)
 	#NMI(df, df)
 	linear_correaltaion(df, df.columns.values)

@@ -12,23 +12,13 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 
 
 
-
-
-
-# NORMALIZACJA
-
-# Normalization
-# scaler = StandardScaler()
-# X_train_scaled = scaler.fit_transform(X_train_balanced)
-# X_test_scaled = scaler.transform(X_test)
-
-# X_train = scaler.fit_transform(X_train)
-# X_test_s = scaler.transform(X_test)
-
-
+# zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
+# np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
+# np.savetxt('X_test_scaled.csv', X_test, delimiter=",")
 
 
 # DOBRY PODZIAL NA TEST I TRAIN
@@ -61,23 +51,22 @@ def train_test_sets_preparation(df):
 
 
 # NA RAZIE NIEWAZNE
-
+# 330_000
 def split_csv(input_csv, output_prefix, max_rows_per_chunk):
 	# Wczytaj cały plik CSV
 	df = pd.read_csv(input_csv, chunksize=max_rows_per_chunk)
-	
 	# Iteruj przez chunki i zapisz każdy chunk do osobnego pliku CSV
 	for i, chunk in enumerate(df):
 		chunk.to_csv(f"{output_prefix}_{i}.csv", index=False)
 
-def split_array_to_csv(input_array, output_prefix, max_rows_per_chunk):
-	# Konwertuj numpy.ndarray na DataFrame
-	df = pd.DataFrame(input_array)
-	# Oblicz liczbę części, na jakie należy podzielić DataFrame
-	num_chunks = len(df) // max_rows_per_chunk + 1
-	# Podziel DataFrame na kawałki i zapisz każdy kawałek do osobnego pliku CSV
-	for i, chunk in enumerate(np.array_split(df, num_chunks)):
-		chunk.to_csv(f"{output_prefix}_{i}.csv", index=False)
+# def split_array_to_csv(input_array, output_prefix, max_rows_per_chunk):
+# 	# Konwertuj numpy.ndarray na DataFrame
+# 	df = pd.DataFrame(input_array)
+# 	# Oblicz liczbę części, na jakie należy podzielić DataFrame
+# 	num_chunks = len(df) // max_rows_per_chunk + 1
+# 	# Podziel DataFrame na kawałki i zapisz każdy kawałek do osobnego pliku CSV
+# 	for i, chunk in enumerate(np.array_split(df, num_chunks)):
+# 		chunk.to_csv(f"{output_prefix}_{i}.csv", index=False)
 
 
 
@@ -148,23 +137,32 @@ def LogisticREG(X_train, X_test, y_train, y_test):
 	print("LR best parameters:", best_params)
 	print("Accuracy:", accuracy)
 
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, classification_report
+import matplotlib.pyplot as plt
+
 def DecisionTree(X_train, X_test, y_train, y_test, max_depth=4):
-	# Initializing the decision tree classifier
-	clf = DecisionTreeClassifier(max_depth=max_depth, random_state=42, criterion='gini')
+    # Initializing the decision tree classifier
+    clf = DecisionTreeClassifier(max_depth=max_depth, random_state=42, criterion='gini')
 
-	# Training the classifier on the training data
-	t = clf.fit(X_train, y_train)
+    # Training the classifier on the training data
+    clf.fit(X_train, y_train)
 
-	# Predicting labels for the test data
-	y_pred = clf.predict(X_test)
+    # Predicting labels for the test data
+    y_pred = clf.predict(X_test)
 
-	# Evaluating the classifier's accuracy
-	accuracy = accuracy_score(y_test, y_pred)
-	print(f'Classification Accuracy: {accuracy:.2f}')
+    # Evaluating the classifier's accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f'Classification Accuracy: {accuracy:.2f}')
 
-	# Displaying the full classification report
-	print('\nClassification Report:')
-	print(classification_report(y_test, y_pred))
+    # Displaying the full classification report
+    print('\nClassification Report:')
+    print(classification_report(y_test, y_pred))
+
+    # Plotting the decision tree
+    #plt.figure(figsize=(12, 8))
+    #plot_tree(clf, filled=True, feature_names=X_train.columns, class_names=['Class 0', 'Class 1'])
+    #plt.show()
 
 def KNN(X_train, X_test, y_train, y_test):
 	# Define the range of values for the parameter k to search
@@ -194,79 +192,47 @@ def KNN(X_train, X_test, y_train, y_test):
 	print(classification_report(y_test, y_pred))
 
 
+def RandomForest(X_train, X_test, y_train, y_test):
+	clf = RandomForestClassifier(min_samples_leaf=10_000)
+	clf.fit(X_train, y_train)
+	y_pred = clf.predict(X_test)
+	accuracy = accuracy_score(y_test, y_pred)
+ 
+	print("Accuracy:", accuracy)
 
-
-
-
-
-
-
-
-
-
-
+	print(classification_report(y_test, y_pred))
 
 
 
 # MODELE NA PODZIELONYCH DANCYH
 
 
-# zalozenia sa takie, ze z calego znormalizowanego pliku X_train powstaly x_train_1, ..., X_train_7 i analogicznie z X_test. W kazdym jest max milion wierszy. y_train i y_test są całe bez podziałów
+# zalozenia sa takie, ze z calego znormalizowanego pliku X_train powstaly x_train_1, ..., X_train_7 i analogicznie z X_test. W kazdym jest max milion wierszy. y_train i y_test są całe bez podziałó
+
+# okazuje sie, ze trzban dropnac kolumne z datatype z zbiorow Domina
+# drop tez dla Unnamed: 0 
+# te dropy z wyzej musz byc dla testu i terningu z osoban
+# i teraz mozna normalizwoac 
+# w test 
+
+X_test = pd.read_csv("/home/meks/Desktop/danexD/X_test.csv")
+X_train = pd.read_csv("/home/meks/Desktop/danexD/X_train.csv")
+y_test = pd.read_csv("/home/meks/Desktop/danexD/y_test.csv")
+y_train = pd.read_csv("/home/meks/Desktop/danexD/y_train.csv")
+
+X_test = X_test.drop(['ARR_DELAY', 'ARR_TIME', 'Unnamed: 0'], axis = 1)
+X_train = X_train.drop(['ARR_DELAY', 'ARR_TIME', 'Unnamed: 0'], axis = 1)
+
+scaler = StandardScaler()
+
+X_train= scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
 
 
-from sklearn.linear_model import LogisticRegression
+#DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
+#DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
+#DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
+#DecisionTree(X_train, X_test, y_train, y_test, max_depth=6)
 
-# Function to load data from CSV files
-def load_data(set_type, index):
-    X = pd.read_csv(f'X_{set_type}_{index}.csv')
-    y = pd.read_csv(f'Y_{set_type}.csv')
-    start = (index - 1) * 1_000_000
-    end = start + len(X)
-    y = y.iloc[start:end]
-    yield X, y.values
-
-
-
-
-
-
-# Initialize SGDClassifier model
-model = SGDClassifier()
-
-# Iteratively train the model on divided datasets
-for X_test, y_test in load_data('train', range(1, 8))
-    model.partial_fit(X_train, y_train)
-
-# Evaluate the model on entire test data
-test_accuracy = 0
-test_samples = 0
-for X_test, y_test in load_data('test', range(1, 8)):
-    test_accuracy += model.score(X_test, y_test) * len(X_test)
-    test_samples += len(X_test)
-
-print("Overall accuracy on test data:")
-print(test_accuracy / test_samples)
-
-
-
-
-
-# Initialize MLPClassifier model
-model = MLPClassifier()
-
-# Iteratively train the model on divided datasets
-for X_train, y_train in load_data('train', range(1, 8)):
-    model.partial_fit(X_train, y_train, classes=np.unique(y_train))
-
-# Evaluate the model on entire test data
-test_accuracy = 0
-test_samples = 0
-for X_test, y_test in load_data('test', range(1, 8)):
-    accuracy = model.score(X_test, y_test)
-    test_accuracy += accuracy * len(X_test)
-    test_samples += len(X_test)
-
-print("Overall accuracy on test data:")
-print(test_accuracy / test_samples)
-
-
+#SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
