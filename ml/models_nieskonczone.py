@@ -15,6 +15,9 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from tqdm import tqdm
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.metrics import accuracy_score, classification_report
+import matplotlib.pyplot as plt
 
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
 # np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
@@ -80,12 +83,14 @@ def BestModelAccuracy(grid_search, X_test, y_test):
 	best_params = grid_search.best_params_
 	best_model = grid_search.best_estimator_
  
-	print(best_params)
 	
 	y_pred = best_model.predict(X_test)
 
 	acc = accuracy_score(y_test, y_pred)
 	print("Accuracy:", acc)
+ 
+	print(f"Best params: {best_params}")
+ 
 	print('\nClassification Report:')
 	print(classification_report(y_test, y_pred))
 
@@ -148,9 +153,7 @@ def LogisticREG(X_train, X_test, y_train, y_test):
 	print("LR best parameters:", best_params)
 	print("Accuracy:", accuracy)
 
-from sklearn.tree import DecisionTreeClassifier, plot_tree
-from sklearn.metrics import accuracy_score, classification_report
-import matplotlib.pyplot as plt
+
 
 def DecisionTree(X_train, X_test, y_train, y_test, max_depth=4):
     # Initializing the decision tree classifier
@@ -178,31 +181,19 @@ def DecisionTree(X_train, X_test, y_train, y_test, max_depth=4):
 
 def KNN(X_train, X_test, y_train, y_test):
 	# Define the range of values for the parameter k to search
-	param_grid = {'n_neighbors': [5, 8]}
+	param_grid = {'n_neighbors': [3, 5]}
 
 	# Initialize the KNN classifier
 	# use metric w minkowsky with euclidean distance
 	knn = KNeighborsClassifier(metric = 'minkowski', p = 2)
 
 	# Create the GridSearchCV object
-	grid_search = GridSearchCV(estimator=knn, param_grid=param_grid, cv=5, scoring='accuracy')
+	grid_search = GridSearchCV(estimator=knn, param_grid=param_grid, cv=5, scoring='accuracy', verbose = 10)
 
 	# Fit the model to the training data
 	grid_search.fit(X_train, y_train)
 
-	# Display the best parameters
-	print("Best Parameters:", grid_search.best_params_)
-
-	# Predict labels for the test data using the best model
-	y_pred = grid_search.predict(X_test)
-
-	# Evaluate the classification accuracy
-	accuracy = accuracy_score(y_test, y_pred)
-	print("Accuracy:", accuracy)
-
-	# Display the full classification report
-	print('\nClassification Report:')
-	print(classification_report(y_test, y_pred))
+	BestModelAccuracy(grid_search, X_test, y_test)
 
 
 def SGD(X_train, X_test, y_train, y_test):
@@ -215,17 +206,7 @@ def SGD(X_train, X_test, y_train, y_test):
 	grid_search = GridSearchCV(estimator=sgdc, param_grid=param_grid, cv=5,n_jobs=1, verbose = 10)
 
 	grid_search.fit(X_train, y_train)
-	best_params = grid_search.best_params_
-	best_model = grid_search.best_estimator_
- 
-	print(best_params)
-	
-	y_pred = best_model.predict(X_test)
-
-	acc = accuracy_score(y_test, y_pred)
-	print("Accuracy:", acc)
-	print('\nClassification Report:')
-	print(classification_report(y_test, y_pred))
+	BestModelAccuracy(grid_search, X_test, y_test)
 
 
 
@@ -258,8 +239,8 @@ decision = False
 sgd = False
 gda = False
 forest = False
-bayes = True
-
+bayes = False
+knn = True
 print("begin:")
 
 
@@ -274,10 +255,16 @@ if decision:
 
 if sgd:
 	SGD(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
-#GDA(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
-#KNN(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+
+if knn:
+    KNN(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+
+if gda:
+	GDA(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+
+if forest:
+	RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
-#RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
