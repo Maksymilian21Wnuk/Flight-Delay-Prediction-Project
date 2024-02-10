@@ -15,6 +15,24 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 
 
+<<<<<<< HEAD
+=======
+# okazuje sie, ze trzban dropnac kolumne z datatype z zbiorow Domina
+# drop tez dla Unnamed: 0 
+# te dropy z wyzej musz byc dla testu i terningu z osoban
+# i teraz mozna normalizwoac 
+# w test 
+X_train= scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# NORMALIZACJA
+
+# Normalization
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_balanced)
+X_test_scaled = scaler.transform(X_test)
+>>>>>>> refs/remotes/origin/main
 
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
 # np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
@@ -228,11 +246,6 @@ scaler = StandardScaler()
 X_train= scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=6)
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
