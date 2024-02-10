@@ -14,22 +14,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
-
-# okazuje sie, ze trzban dropnac kolumne z datatype z zbiorow Domina
-# drop tez dla Unnamed: 0 
-# te dropy z wyzej musz byc dla testu i terningu z osoban
-# i teraz mozna normalizwoac 
-# w test 
-X_train= scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-
-# NORMALIZACJA
-
-# Normalization
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train_balanced)
-X_test_scaled = scaler.transform(X_test)
+from tqdm import tqdm
 
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
 # np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
@@ -89,24 +74,35 @@ def split_csv(input_csv, output_prefix, max_rows_per_chunk):
 
 # TE SA NA NIEPODZIELONYCH DANYCH
 
+# just to check accuracy of found grid from searching
+def BestModelAccuracy(grid_search, X_test, y_test):
+    
+	best_params = grid_search.best_params_
+	best_model = grid_search.best_estimator_
+ 
+	print(best_params)
+	
+	y_pred = best_model.predict(X_test)
 
-def GDA(X_train, X_test, y_train, y_test):
+	acc = accuracy_score(y_test, y_pred)
+	print("Accuracy:", acc)
+	print('\nClassification Report:')
+	print(classification_report(y_test, y_pred))
+
+def Bayesian(X_train, X_test, y_train, y_test):
 	# Initializing the GDA classifier
 	clf = GaussianNB()
 
 	# Training the classifier on the training data
-	clf.fit(X_train, y_train)
+ 
+	params = {'var_smoothing': [1e-9, 1e-8, 1e-7, 1e-6, 1e-5]}
+ 
+	grid_search = 	GridSearchCV(clf, params, cv = 5, scoring='accuracy')
+	grid_search.fit(X_train, y_train)
 
-	# Predicting labels for the test data
-	y_pred = clf.predict(X_test)
-
-	# Evaluating the classifier's accuracy
-	accuracy = accuracy_score(y_test, y_pred)
-	print(f'Classification Accuracy: {accuracy:.2f}')
-
-	# Displaying the full classification report
-	print('\nClassification Report:')
-	print(classification_report(y_test, y_pred))
+	BestModelAccuracy(grid_search, X_test, y_test)
+ 
+ 
 
 def SVM(X_train, X_test, y_train, y_test):
     # Initializing the SVM classifier
@@ -182,7 +178,7 @@ def DecisionTree(X_train, X_test, y_train, y_test, max_depth=4):
 
 def KNN(X_train, X_test, y_train, y_test):
 	# Define the range of values for the parameter k to search
-	param_grid = {'n_neighbors': [5]}
+	param_grid = {'n_neighbors': [5, 8]}
 
 	# Initialize the KNN classifier
 	# use metric w minkowsky with euclidean distance
@@ -211,19 +207,20 @@ def KNN(X_train, X_test, y_train, y_test):
 
 def SGD(X_train, X_test, y_train, y_test):
 	sgdc = SGDClassifier()
-	param_grid = {
-		'loss': ['hinge', 'log', 'modified_huber'],  
-		'penalty': ['l1', 'l2', 'elasticnet'],       
+	param_grid = {     
 		'alpha': [0.0001, 0.001, 0.01],              
-		'max_iter': [1000, 2000, 3000],               
+		'max_iter': [1000, 2000, 3000, 5000, 10000, 20000],    
 	}
 
-	grid_search = GridSearchCV(estimator=sgdc, param_grid=param_grid, cv=5,n_jobs=1)
+	grid_search = GridSearchCV(estimator=sgdc, param_grid=param_grid, cv=5,n_jobs=1, verbose = 10)
 
 	grid_search.fit(X_train, y_train)
-	y_pred = sgdc.predict(X_test)
-
-	print(grid_search.best_params_)
+	best_params = grid_search.best_params_
+	best_model = grid_search.best_estimator_
+ 
+	print(best_params)
+	
+	y_pred = best_model.predict(X_test)
 
 	acc = accuracy_score(y_test, y_pred)
 	print("Accuracy:", acc)
@@ -257,17 +254,30 @@ X_train= scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
-#DecisionTree(X_train, X_test, y_train, y_test, max_depth=6)
+decision = False
+sgd = False
+gda = False
+forest = False
+bayes = True
 
 print("begin:")
-SGD(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+
+
+if bayes:
+    Bayesian(X_train, X_test, y_train, y_test)
+
+if decision:
+	DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
+	DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
+	DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
+	DecisionTree(X_train, X_test, y_train, y_test, max_depth=6)
+
+if sgd:
+	SGD(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 #GDA(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 #KNN(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
-RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+#RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
