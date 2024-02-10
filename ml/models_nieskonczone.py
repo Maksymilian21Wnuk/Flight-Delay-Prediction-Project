@@ -14,9 +14,6 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 
-
-
-
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
 # np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
 # np.savetxt('X_test_scaled.csv', X_test, delimiter=",")
@@ -243,6 +240,7 @@ X_train= scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 
+<<<<<<< HEAD
 #DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
 #DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
 #DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
