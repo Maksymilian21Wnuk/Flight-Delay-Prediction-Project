@@ -17,6 +17,7 @@ from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
 from tqdm import tqdm
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
@@ -181,19 +182,27 @@ def DecisionTree(X_train, X_test, y_train, y_test, max_depth=4):
 
 def KNN(X_train, X_test, y_train, y_test):
 	# Define the range of values for the parameter k to search
-	param_grid = {'n_neighbors': [3, 5]}
+	#param_grid = {'n_neighbors': [3, 5]}
 
 	# Initialize the KNN classifier
 	# use metric w minkowsky with euclidean distance
-	knn = KNeighborsClassifier(metric = 'minkowski', p = 2)
+	knn = KNeighborsClassifier(metric = 'minkowski', p = 2, n_neighbors=3)
 
-	# Create the GridSearchCV object
-	grid_search = GridSearchCV(estimator=knn, param_grid=param_grid, cv=5, scoring='accuracy', verbose = 10)
+	knn.fit(X_train, y_train)
+	y_pred = knn.predict(X_test)
 
+	accuracy = accuracy_score(y_test, y_pred)
+ 
+	print(f"accuracy: {accuracy}")
+	print(classification_report(y_test, y_pred))
+ 
+ 	# Create the GridSearchCV object
+	#grid_search = GridSearchCV(estimator=knn, param_grid=param_grid, cv=5, scoring='accuracy', verbose = 10)
 	# Fit the model to the training data
-	grid_search.fit(X_train, y_train)
+	#grid_search.fit(X_train, y_train)
+	#BestModelAccuracy(grid_search, X_test, y_test)
 
-	BestModelAccuracy(grid_search, X_test, y_test)
+
 
 
 def SGD(X_train, X_test, y_train, y_test):
@@ -209,7 +218,13 @@ def SGD(X_train, X_test, y_train, y_test):
 	BestModelAccuracy(grid_search, X_test, y_test)
 
 
+def ADA(X_train, X_test, y_train, y_test):
+    clf = AdaBoostClassifier(n_estimators=100, algorithm="SAMME", random_state=0)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
 
+    print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
+    print(classification_report(y_test, y_pred))
 
 # MODELE NA PODZIELONYCH DANCYH
 
@@ -240,7 +255,8 @@ sgd = False
 gda = False
 forest = False
 bayes = False
-knn = True
+knn = False
+ada = True
 print("begin:")
 
 
@@ -264,6 +280,10 @@ if gda:
 
 if forest:
 	RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+
+if ada:
+    print("ada")
+    ADA(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
