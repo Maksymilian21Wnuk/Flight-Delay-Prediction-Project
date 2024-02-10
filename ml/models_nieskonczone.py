@@ -13,6 +13,23 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import BaggingClassifier, RandomForestClassifier
+
+# okazuje sie, ze trzban dropnac kolumne z datatype z zbiorow Domina
+# drop tez dla Unnamed: 0 
+# te dropy z wyzej musz byc dla testu i terningu z osoban
+# i teraz mozna normalizwoac 
+# w test 
+X_train= scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+
+# NORMALIZACJA
+
+# Normalization
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_balanced)
+X_test_scaled = scaler.transform(X_test)
 
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
 # np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
@@ -240,7 +257,6 @@ X_train= scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 
-<<<<<<< HEAD
 #DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
 #DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
 #DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
@@ -253,6 +269,5 @@ SGD(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 
-#for i in range(1, 20):
-#	print(f"depth: {i}")
-#	DecisionTree(X_train, X_test, y_train, y_test, max_depth=i)
+#SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
