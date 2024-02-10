@@ -75,17 +75,6 @@ flights and weather:
 	\end{itemize}
 				
 			\end{itemize}
-\newpage
-\section{Explanatory Data Analysis (EDA) plots}
-In this section we will look at plots describing data in our dataset.\\
-Those plots are constructed in python' file \textit{EDA\_plottings.py} 
-	
-	\includegraphics[scale=0.22]{plot1}
-	\includegraphics[scale=0.25]{plot2}
-	\includegraphics[scale=0.4]{plot3}
-	\includegraphics[scale=0.4]{plot4}	
-
-\newpage
 \section{Data preprocessing}
 
 \subsection{NaN's removal}
@@ -107,6 +96,19 @@ However, we are not sure if that was proper way of doing this, hence we ask ours
 \subsection{Mapping strings to integers}
 In machine learning we would like to represent strings as integers. We will do that, by mapping destination and origin cities to integers
 as json file. This file is in \textit{Flight-Delay-Prediction/ml} folder, named mappings.json. Additionally, we will map some weather data. Under column conditions there are many string representations, but we will represent it as integers (also in file mappings.json).
+
+\newpage
+\section{Explanatory Data Analysis (EDA) plots}
+In this section we will look at plots describing data in our dataset.\\
+Those plots are constructed in python' file \textit{EDA\_plottings.py} 
+	
+	\includegraphics[scale=0.22]{plot1}
+	\includegraphics[scale=0.25]{plot2}
+	\includegraphics[scale=0.4]{plot3}
+	\includegraphics[scale=0.4]{plot4}	
+
+\newpage
+
 
 
 \section{Machine learning part}
