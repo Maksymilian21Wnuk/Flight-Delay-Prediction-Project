@@ -27,13 +27,13 @@ Our approach centers around machine learning techniques, and we will employ stat
 Getting data for our machine learning models requires two combined datasets, 
 flights and weather:
 	\subsection{Flights data}
-		We are getting 2017-2018 flights data from \url{kaggle.com} website.
+		We are getting 2017-2018 flights data from this: \url{https://www.kaggle.com/datasets/yuanyuwendymu/airline-delay-and-cancellation-data-2009-2018} dataset from well known site Kaggle.
 		It contains of columns:	
 			\begin{itemize}
 \item Airline - company name of airline operating flight
 \item Origin city  - city of departure
 \item Destination city - city of arrival
-\item CRS dep time, CS arr time - expected time of departure and arrive in (weirdly represented) unsigned integer in which 
+\item CRS dep time, CRS arr time - expected time of departure and arrive in (weirdly represented) unsigned integer in which 
 		least signitficant digits represent minutes and most significant represent hours
 \item Arr time - factual time of arrive
 \item Cancelled, Delay - boolean values signifying whether the flight was cancelled or (respectively) delayed
@@ -46,7 +46,7 @@ flights and weather:
 		Fetching data for weather requires more work than just downloading a csv file.
 		We will be downloading it by making api requests to \url{https://www.visualcrossing.com}.
 		Thanks to Visual Crossing\textsuperscript{\tiny\textregistered} company, we were able to make those requests in unlimited way.
-		We contacted their support and then they gave us access to unlimited api key. 	\\
+		We contacted their support and then they gave us access to unlimited synchronous API queries. 	\\
 		However, we couldn't make 12 millions of api queries. Here we encounter
 		our first problem.\\
 		\textbf{Solution:}\\
@@ -91,7 +91,8 @@ we removed columns that contained A LOT of NaN's. Those columns were:
 However, we are not sure if that was proper way of doing this, hence we ask ourselves: does snow affect flight delays? How about snowdepth and wingust? Later on we can always retrieve those columns and check correlation.
 
 \subsection{Normalization}
-
+In order to normalize data, we will be using StandardScaler() class from sklearn.preprocessing library.
+It was vital to make our dataset have common scale in order to maybe speed up and (?)make models work better.
 
 \subsection{Mapping strings to integers}
 In machine learning we would like to represent strings as integers. We will do that, by mapping destination and origin cities to integers
@@ -106,11 +107,73 @@ Those plots are constructed in python' file \textit{EDA\_plottings.py}
 	\includegraphics[scale=0.25]{plot2}
 	\includegraphics[scale=0.4]{plot3}
 	\includegraphics[scale=0.4]{plot4}	
+	\includegraphics[scale=0.4]{delay_plot}
+	\includegraphics[scale=0.25]{delay_plot2}
 
 \newpage
 
-
-
 \section{Machine learning part}
+In this section we will consider machine learning algorithms. All of them are sklearn library based classes.
+\subsection{Decision tree}
+We ran Decision Trees with gini criterion from max\_depth ranging from 4 to 20.
+From our experience, the best results we achieved with depth equal to 17. We achived 66\% accuracy. It's the best accuracy we could score in our
+models.
 
-\end{document} % This is the end of the document
+\subsection{Naive Bayes}
+Our model was trained on GaussianNB() classifier. Furthermore, we used GridSearchCV() class, which helped us
+to choose best var\_smoothing parameter (portion of the largest variance of all features that is added to variances for calculation stability [from
+documentation]). It turned out that best accuracy was achieved with smoothing equal to $10^{-9}$ and returning 63\% of accuracy. Testing lower 
+smoothing values resulted in same accuracy.
+
+\subsection{Miscellaneous models}
+	\begin{itemize}
+	\item ADABoostClassifier with SAMME algorithm and 100 estimators: 57\%
+	\item Random Forest Classifier with 10\_000 min\_leafs(minimum samples required to be a leaf): 64\%
+	\item SGD Classifier with best alpha equal to 0.0001 and max\_iter equal to 3000 gives 62.5\% accuracy
+	\end{itemize}
+
+\subsection{4fun models}
+In this section we considered models that were extremely bad or did not fall under machine learning algorithms category (neural networks).
+
+\subsubsection{Online model}
+Accuracy - around 33\%. We tried to implement using divided datasets and train model by SGD classifier (stochastic gradient descent).
+It was bad.
+
+\subsubsection{Neural network}
+Accuracy - around 67\%. It was kind of good result.  I don't know what this code does. help
+
+
+\section{Conclusion}
+Even though we think 67\% accuracy might be too low, project taught us numerous important things. First and foremost, data exploration, that is
+working with huge datasets and handling large api queries.  Then we had to process data to work with it. Problems started when we started machine learning
+section. One thing that could be the cause of failure might be too much of data and lack of knowledge. Maybe we could have used time series? We
+could easily see the correlation between time and delay of flights.
+
+
+\end{document} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
