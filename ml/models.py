@@ -20,6 +20,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.ensemble import AdaBoostClassifier
 import matplotlib.pyplot as plt
 
+
 # zwracane sa tablice numpy.array, zapisujemy je do csv i pozniej bedziemy dzielic na porcje 
 # np.savetxt('X_train_scaled.csv', X_train, delimiter=",")
 # np.savetxt('X_test_scaled.csv', X_test, delimiter=",")
@@ -226,6 +227,33 @@ def ADA(X_train, X_test, y_train, y_test):
     print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
     print(classification_report(y_test, y_pred))
 
+
+
+'''
+def siec(X_train, X_test, y_train, y_test):
+    model = Sequential([
+        Dense(64, activation='relu', input_shape=(X_train.shape[1],)),  # Warstwa ukryta z 64 neuronami i funkcją aktywacji ReLU
+        Dense(32, activation='relu'), 
+        Dense(16, activation='relu'),  
+         
+        Dense(8, activation='relu'),   # Druga warstwa ukryta z 32 neuronami i funkcją aktywacji ReLU
+        Dense(1, activation='sigmoid')                             # Warstwa wyjściowa z jednym neuronem i funkcją aktywacji sigmoid
+    ])
+
+    # Kompilacja modelu
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+    # Trenowanie modelu
+    history=model.fit(X_train, y_train, epochs=100, batch_size=328, validation_data=(X_test, y_test))
+    #i would like to get waights of this model to the file to use it in the future
+    model.save_weights('model.h5')
+    # Ocena modelu
+    loss, accuracy = model.evaluate(X_test, y_test)
+    print("Test Loss:", loss)
+    print("Test Accuracy:", accuracy)
+    return model, history
+'''
+
 # MODELE NA PODZIELONYCH DANCYH
 
 
@@ -245,45 +273,53 @@ y_train = pd.read_csv("/home/meks/Desktop/danexD/y_train.csv")
 X_test = X_test.drop(['ARR_DELAY', 'ARR_TIME', 'Unnamed: 0'], axis = 1)
 X_train = X_train.drop(['ARR_DELAY', 'ARR_TIME', 'Unnamed: 0'], axis = 1)
 
+
+
 scaler = StandardScaler()
 X_train= scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 
-decision = False
-sgd = False
-gda = False
-forest = False
-bayes = False
-knn = False
-ada = True
+y_train = y_train.values.ravel()
+y_test = y_test.values.ravel()
+
+print(y_test.shape)
+print(y_train.shape)
+print(X_test.shape)
+print(X_train.shape)
+
+model = input("give model name: ")
+
+
+
 print("begin:")
 
 
-if bayes:
-    Bayesian(X_train, X_test, y_train, y_test)
+match model:
+	case 'bayes':
+		Bayesian(X_train, X_test, y_train, y_test)
 
-if decision:
-	DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
-	DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
-	DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
-	DecisionTree(X_train, X_test, y_train, y_test, max_depth=6)
+	case 'decision':
+		#DecisionTree(X_train, X_test, y_train, y_test, max_depth=2)
+		#DecisionTree(X_train, X_test, y_train, y_test, max_depth=4)
+		#DecisionTree(X_train, X_test, y_train, y_test, max_depth=8)
+		DecisionTree(X_train, X_test, y_train, y_test, max_depth=17)
 
-if sgd:
-	SGD(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+	case 'sgd':
+		SGD(X_train, X_test, y_train, y_test)
 
-if knn:
-    KNN(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+	case 'knn':
+		KNN(X_train, X_test, y_train, y_test)
 
-if gda:
-	GDA(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+	case 'gda':
+		GDA(X_train, X_test, y_train, y_test)
 
-if forest:
-	RandomForest(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+	case 'forest':
+		RandomForest(X_train, X_test, y_train, y_test)
 
-if ada:
-    print("ada")
-    ADA(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
+	case 'ada':
+		print("ada")
+		ADA(X_train, X_test, y_train, y_test)
 
 #SVM(X_train, X_test, y_train.values.ravel(), y_test.values.ravel())
 

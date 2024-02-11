@@ -98,6 +98,9 @@ It was vital to make our dataset have common scale in order to maybe speed up an
 In machine learning we would like to represent strings as integers. We will do that, by mapping destination and origin cities to integers
 as json file. This file is in \textit{Flight-Delay-Prediction/ml} folder, named mappings.json. Additionally, we will map some weather data. Under column conditions there are many string representations, but we will represent it as integers (also in file mappings.json).
 
+\subsection{Dividing data}
+We decided to divide data to contain 50\% of delayed and 50\% non delayed flights, and trained on that dataset.
+
 \newpage
 \section{Explanatory Data Analysis (EDA) plots}
 In this section we will look at plots describing data in our dataset.\\
@@ -116,13 +119,13 @@ Those plots are constructed in python' file \textit{EDA\_plottings.py}
 In this section we will consider machine learning algorithms. All of them are sklearn library based classes.
 \subsection{Decision tree}
 We ran Decision Trees with gini criterion from max\_depth ranging from 4 to 20.
-From our experience, the best results we achieved with depth equal to 17. We achived 66\% accuracy. It's the best accuracy we could score in our
+From our experience, the best results we achieved with depth equal to 17. We achived 66\% accuracy (72\% for non-delayed and 54\% for delayed prediction). It's the best accuracy we could score in our
 models.
 
 \subsection{Naive Bayes}
 Our model was trained on GaussianNB() classifier. Furthermore, we used GridSearchCV() class, which helped us
 to choose best var\_smoothing parameter (portion of the largest variance of all features that is added to variances for calculation stability [from
-documentation]). It turned out that best accuracy was achieved with smoothing equal to $10^{-9}$ and returning 63\% of accuracy. Testing lower 
+documentation]). It turned out that best accuracy was achieved with smoothing equal to $10^{-9}$ and returning 63\% of accuracy ( 65\% for non-delayed and 52\% for delayed flights). Testing lower 
 smoothing values resulted in same accuracy.
 
 \subsection{Miscellaneous models}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.1.16)  11 FEB 2024 19:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.1.16)  11 FEB 2024 20:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -336,80 +336,86 @@ er() class from sklearn.preprocessing
  []
 
 [3]
-<./plots/plot1.png, id=98, 1927.2pt x 978.65625pt>
+<./plots/plot1.png, id=99, 1927.2pt x 978.65625pt>
 File: ./plots/plot1.png Graphic file (type png)
 <use ./plots/plot1.png>
-Package pdftex.def Info: ./plots/plot1.png  used on input line 106.
+Package pdftex.def Info: ./plots/plot1.png  used on input line 109.
 (pdftex.def)             Requested size: 423.98532pt x 215.30504pt.
-<./plots/plot2.png, id=100, 1927.2pt x 978.65625pt>
+<./plots/plot2.png, id=101, 1927.2pt x 978.65625pt>
 File: ./plots/plot2.png Graphic file (type png)
 <use ./plots/plot2.png>
-Package pdftex.def Info: ./plots/plot2.png  used on input line 107.
+Package pdftex.def Info: ./plots/plot2.png  used on input line 110.
 (pdftex.def)             Requested size: 481.79883pt x 244.66347pt.
-<./plots/plot3.png, id=101, 1204.5pt x 602.25pt>
+<./plots/plot3.png, id=102, 1204.5pt x 602.25pt>
 File: ./plots/plot3.png Graphic file (type png)
 <use ./plots/plot3.png>
-Package pdftex.def Info: ./plots/plot3.png  used on input line 108.
+Package pdftex.def Info: ./plots/plot3.png  used on input line 111.
 (pdftex.def)             Requested size: 481.79147pt x 240.89572pt.
-<./plots/plot4.png, id=102, 1003.75pt x 602.25pt>
+<./plots/plot4.png, id=103, 1003.75pt x 602.25pt>
 File: ./plots/plot4.png Graphic file (type png)
 <use ./plots/plot4.png>
-Package pdftex.def Info: ./plots/plot4.png  used on input line 109.
+Package pdftex.def Info: ./plots/plot4.png  used on input line 112.
 (pdftex.def)             Requested size: 401.49289pt x 240.89572pt.
-<./plots/delay_plot.png, id=103, 1003.75pt x 602.25pt>
+<./plots/delay_plot.png, id=104, 1003.75pt x 602.25pt>
 File: ./plots/delay_plot.png Graphic file (type png)
 <use ./plots/delay_plot.png>
-Package pdftex.def Info: ./plots/delay_plot.png  used on input line 110.
+Package pdftex.def Info: ./plots/delay_plot.png  used on input line 113.
 (pdftex.def)             Requested size: 401.49289pt x 240.89572pt.
-<./plots/delay_plot2.png, id=104, 1927.2pt x 978.65625pt>
+<./plots/delay_plot2.png, id=105, 1927.2pt x 978.65625pt>
 File: ./plots/delay_plot2.png Graphic file (type png)
 <use ./plots/delay_plot2.png>
-Package pdftex.def Info: ./plots/delay_plot2.png  used on input line 111.
+Package pdftex.def Info: ./plots/delay_plot2.png  used on input line 114.
 (pdftex.def)             Requested size: 481.79883pt x 244.66347pt.
 
-Overfull \hbox (93.98532pt too wide) in paragraph at lines 106--112
+Overfull \hbox (93.98532pt too wide) in paragraph at lines 109--115
 [][]
  []
 
 
-Overfull \hbox (136.79883pt too wide) in paragraph at lines 106--112
+Overfull \hbox (136.79883pt too wide) in paragraph at lines 109--115
 []
  []
 
 
-Overfull \hbox (136.79147pt too wide) in paragraph at lines 106--112
+Overfull \hbox (136.79147pt too wide) in paragraph at lines 109--115
 []
  []
 
 
-Overfull \hbox (56.49289pt too wide) in paragraph at lines 106--112
+Overfull \hbox (56.49289pt too wide) in paragraph at lines 109--115
 []
  []
 
 
-Overfull \hbox (56.49289pt too wide) in paragraph at lines 106--112
+Overfull \hbox (56.49289pt too wide) in paragraph at lines 109--115
 []
  []
 
 
-Overfull \hbox (136.79883pt too wide) in paragraph at lines 106--112
+Overfull \hbox (136.79883pt too wide) in paragraph at lines 109--115
 [] 
  []
 
 [4 <./plots/plot1.png> <./plots/plot2.png>] [5 <./plots/plot3.png> <./plots/plo
 t4.png>] [6 <./plots/delay_plot.png> <./plots/delay_plot2.png>]
-Overfull \hbox (1.53397pt too wide) in paragraph at lines 131--132
+Overfull \hbox (1.53397pt too wide) in paragraph at lines 134--135
 []\OT1/cmr/m/n/10 Random For-est Clas-si-fier with 10[]000 min[]leafs(minimum s
 am-ples re-quired
  []
 
 [7] [8] (./raport.aux)
-Package rerunfilecheck Info: File `raport.out' has not changed.
-(rerunfilecheck)             Checksum: E4FF7ECD2E2F66C4A39B98E745A522DD;2367.
+
+Package rerunfilecheck Warning: File `raport.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `raport.out':
+(rerunfilecheck)             Before: E4FF7ECD2E2F66C4A39B98E745A522DD;2367
+(rerunfilecheck)             After:  15F00CED0D206C0B0F07AE4BC77FE6E7;2493.
  ) 
 Here is how much of TeX's memory you used:
- 8916 strings out of 480247
- 139114 string characters out of 5896151
+ 8917 strings out of 480247
+ 139128 string characters out of 5896151
  430149 words of memory out of 5000000
  26732 multiletter control sequences out of 15000+600000
  475830 words of font info for 51 fonts, out of 8000000 for 9000
@@ -426,10 +432,10 @@ fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/ty
 pe1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
 lic/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
 sfonts/cm/cmtt10.pfb>
-Output written on raport.pdf (8 pages, 546440 bytes).
+Output written on raport.pdf (8 pages, 546519 bytes).
 PDF statistics:
- 190 PDF objects out of 1000 (max. 8388607)
- 146 compressed objects within 2 object streams
- 26 named destinations out of 1000 (max. 500000)
+ 191 PDF objects out of 1000 (max. 8388607)
+ 147 compressed objects within 2 object streams
+ 27 named destinations out of 1000 (max. 500000)
  167 words of extra memory for PDF output out of 10000 (max. 10000000)
 
